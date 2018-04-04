@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DigitalLabTask:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DigitalLabTask_jar</output-path>
+    <root id="archive" name="DigitalLabTask.jar">
+      <element id="module-output" name="DigitalLabTask" />
+    </root>
+  </artifact>
+</component>
