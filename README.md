@@ -68,16 +68,24 @@ For example, if you want to calculate route distance from A to B and then to B t
 -load fileName.dat shortestRoute -from:A -to:C
 ```
 		   
-**`tripsCount -from:<from-node> -to:<to-node> -where<condition>`**
+**`tripsCount -from:<from-node> -to:<to-node> -where<condition> [-revisit:<t|f>] [-maxvisits:<value>]`**
 >This operation calculate the count of trips between `<from-node>` and `<to-node>` which meets the `<contition>` for the number of stops. 
 
 The condition consists of comparison operator and the value to compare to. For example, you may want to calculate the number of trips from `A` to `C` with maximum of three stops. In this case you can type:
+
+`-revisit` and `-maxvisits` are optional. `-revisit` can receive only get **t** or **f**. Specifies if the same node can be revisited. Default is `true`.
+
+Example: ```-revisit:f```
+
+`-maxvisits` specifies how many times the same node can be visited. Default is 10.
+
+Example: ```-maxvisits:2```
 		   
 ```-load fileName.dat tripsCount -from:A -to:C -where^<30```
            
 The `-where` option accepts operators like `<`, `<=`, `=`, `>=`, `>` for comparison and the target value to compare against. Please note, there must be no symbol between this option and its parameters but the `^` symbol to escape special symbols.
 		
-**`routesCount -from:<from-node> -to:<to-node> -where<condition>`**
+**`routesCount -from:<from-node> -to:<to-node> -where<condition> [-revisit:<t|f>] [-maxvisits:<value>]`**
 >This will calculate number of different routes between nodes meeting the condition.
 
 For example, if you want to calculate the number of different routes from `C` to `C` with a distance of less than 30, then you can type:
@@ -88,6 +96,14 @@ The `-where` option accepts operators like `<`, `<=`, `=`, `>=`, `>` for compari
 		the target value to compare against. Don't forget to escape special symbols for 
 		this option by using "^" symbol.
         NOTE: where option in this operation compares total route length, not trips count
+
+`-revisit` and `-maxvisits` are optional. `-revisit` can receive only get **t** or **f**. Specifies if the same node can be revisited. Default is `true`.
+
+Example: ```-revisit:f```
+
+`-maxvisits` specifies how many times the same node can be visited. Default is 10.
+
+Example: ```-maxvisits:2```
 
 ### Examples 
 ```

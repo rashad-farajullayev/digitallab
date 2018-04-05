@@ -8,6 +8,8 @@ import az.pashabank.digitallab.RailRoadTask.rule.Source;
 import java.util.*;
 
 public class Graph {
+    private int nodeMaxRevisitCount = 10;
+
     private Map<String, Node> nodes;
     private List<Edge> edges;
 
@@ -30,7 +32,7 @@ public class Graph {
 
             String fromNode = s.substring(0, 1);
             String toNode = s.substring(1, 2);
-            String distance = s.substring(2, 3);
+            String distance = s.substring(2);
 
             Edge edge = new Edge(fromNode, toNode, Integer.valueOf(distance).intValue());
             graph.addEdge(edge);
@@ -59,6 +61,13 @@ public class Graph {
         return nodes.get(name);
     }
 
+    public int getNodeMaxRevisitCount() {
+        return nodeMaxRevisitCount;
+    }
+
+    public void setNodeMaxRevisitCount(int nodeMaxRevisitCount) {
+        this.nodeMaxRevisitCount = nodeMaxRevisitCount;
+    }
 
     public Collection<Node> getNodes() {
         return nodes.values();
@@ -128,8 +137,16 @@ public class Graph {
         List<Edge> edges = node.getOutboundEdges();
         for (Edge e : edges) {
 
-            if (!canRevisit && route.getRoute().indexOf(e.getToNode())>0)
-                continue;
+            if (canRevisit){
+                String str = route.getRoute().toString();
+
+                if (str.length() - str.replaceAll(e.getToNode(), "").length()> nodeMaxRevisitCount)
+                    continue;
+            } else {
+                if (route.getRoute().indexOf(e.getToNode())>0)
+                    continue;
+            }
+
 
             Route newRoute = route.clone();
             newRoute.addNode(e.getToNode(), e.getDistance());
@@ -143,9 +160,12 @@ public class Graph {
         }
     }
 
-    public int findTripsCount(String from, String to, Operator operator, int value) {
+    public int findTripsCount(String from, String to, Operator operator, int value, boolean canRevisit, int maxVisits) {
 
-        List<Route> routes = findRoutes(from, to, new Condition(Source.STOPS, operator, value), true);
+        if (maxVisits > 0)
+            this.nodeMaxRevisitCount = maxVisits;
+
+        List<Route> routes = findRoutes(from, to, new Condition(Source.STOPS, operator, value), canRevisit);
         if (routes == null)
             return 0;
         return routes.size();
@@ -173,8 +193,12 @@ public class Graph {
         return min;
     }
 
-    public int findTotalRoutesCount (String from, String to, Operator operator, long value) {
-        List<Route> routes = findRoutes(from, to, new Condition(Source.DISTANCE, operator, value), true);
+    public int findTotalRoutesCount (String from, String to, Operator operator, long value, boolean canRevisit, int maxVisits) {
+
+        if (maxVisits > 0)
+            this.nodeMaxRevisitCount = maxVisits;
+
+        List<Route> routes = findRoutes(from, to, new Condition(Source.DISTANCE, operator, value), canRevisit);
 
         if (routes == null || routes.size() == 0)
             return -1;

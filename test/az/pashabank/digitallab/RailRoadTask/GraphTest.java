@@ -25,7 +25,7 @@ class GraphTest {
         Node nodeA = g.getNode("A");
         assertNotNull(nodeA, "Node A should have been found from the graph");
         List<Edge> edges = nodeA.getOutboundEdges();
-        assertEquals(edges.size(), 3, "Nodes must have had 3 edges");
+        assertEquals(3, edges.size() , "Nodes must have had 3 edges");
     }
 
     @Test
@@ -35,31 +35,31 @@ class GraphTest {
         graph.addNode("B");
         graph.addNode("A");
 
-        assertEquals(graph.getNodes().size(), 2, "Nodes with the same name actually equal to each other");
+        assertEquals(2, graph.getNodes().size(), "Nodes with the same name actually equal to each other");
     }
 
     @Test
     void findTripsCount() throws GraphException {
-        int result = graph.findTripsCount("C", "C", Operator.SMALLER_THAN_EQUAL, 3);
-        assertEquals(result, 2, "There must be 2 trips from the search criteria");
+        int result = graph.findTripsCount("C", "C", Operator.SMALLER_THAN_EQUAL, 3, true, 0);
+        assertEquals(2, result, "There must be 2 trips from the search criteria");
 
-        result = graph.findTripsCount("A", "C", Operator.EQUAL, 4);
-        assertEquals(result, 3, "There must be exactly 3 trips with 4 stops");
+        result = graph.findTripsCount("A", "C", Operator.EQUAL, 4, true, 0);
+        assertEquals(3, result, "There must be exactly 3 trips with 4 stops");
     }
 
     @Test
     void findShortestRoute() throws GraphException {
 
         long result = graph.findShortestRoute("A", "C");
-        assertEquals(result, 9, "Shortest distance from A to C must be equal to 9");
+        assertEquals(9, result, "Shortest distance from A to C must be equal to 9");
 
         result = graph.findShortestRoute("B", "B");
-        assertEquals(result, 9, "Distance from B to B must be equal to 9");
+        assertEquals(9, result, "Distance from B to B must be equal to 9");
     }
 
     @Test
     void findTotalRoutesCount() throws GraphException {
-        long count = graph.findTotalRoutesCount("C", "C", Operator.SMALLER, 30);
-        assertEquals(count, 7, "There must be 7 total routes from C to C with distance smaller than 30");
+        long count = graph.findTotalRoutesCount("C", "C", Operator.SMALLER, 30, true, 0);
+        assertEquals(7, count, "There must be 7 total routes from C to C with distance smaller than 30");
     }
 }

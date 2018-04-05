@@ -73,7 +73,7 @@ public class Main
             case ROUTES_COUNT:
                 // Here we are counting total possible number of routes
                 // from one node to another node
-                System.out.println(w(graph.findTotalRoutesCount(parser.getFrom(), parser.getTo(), parser.getOperator(), parser.getValue())));
+                System.out.println(w(graph.findTotalRoutesCount(parser.getFrom(), parser.getTo(), parser.getOperator(), parser.getValue(), parser.getRevisit(), parser.getMaxVisits())));
                 break;
             case SHORTEST_ROUTE:
                 // Here we display the shortest possible route between two nodes
@@ -81,7 +81,7 @@ public class Main
                 break;
             case TRIPS_COUNT:
                 // Calculating number of possible trips between two nodes
-                System.out.println(w(graph.findTripsCount(parser.getFrom(), parser.getTo(), parser.getOperator(), parser.getValue())));
+                System.out.println(w(graph.findTripsCount(parser.getFrom(), parser.getTo(), parser.getOperator(), parser.getValue(), parser.getRevisit(), parser.getMaxVisits())));
                 break;
         }
     }
@@ -125,11 +125,11 @@ public class Main
         System.out.println("Output #3: " + w(graph.findDistance( new Route ("ADC"))));
         System.out.println("Output #4: " + w(graph.findDistance( new Route ("AEBCD"))));
         System.out.println("Output #5: " + w(graph.findDistance( new Route ("AED"))));
-        System.out.println("Output #6: " + w(graph.findTripsCount("C", "C", Operator.SMALLER_THAN_EQUAL, 3)));
-        System.out.println("Output #7: " + w(graph.findTripsCount("A", "C", Operator.EQUAL, 4)));
+        System.out.println("Output #6: " + w(graph.findTripsCount("C", "C", Operator.SMALLER_THAN_EQUAL, 3, true, 0)));
+        System.out.println("Output #7: " + w(graph.findTripsCount("A", "C", Operator.EQUAL, 4, true, 0)));
         System.out.println("Output #8: " + w(graph.findShortestRoute("A", "C")));
         System.out.println("Output #9: " + w(graph.findShortestRoute("B", "B")));
-        System.out.println("Output #10: " + w(graph.findTotalRoutesCount("C", "C", Operator.SMALLER, 30)));
+        System.out.println("Output #10: " + w(graph.findTotalRoutesCount("C", "C", Operator.SMALLER, 30, true, 0)));
     }
 
     private static void printHelp(){
@@ -178,7 +178,7 @@ public class Main
                 "        Example: \n" +
                 "        -load fileName.dat shortestRoute -from:A -to:C\n" +
                 "\n" +
-                "        tripsCount -from:<from-node> -to:<to-node> -where<condition>\n" +
+                "        tripsCount -from:<from-node> -to:<to-node> -where<condition> [-revisit:<t|f>] [-maxvisits:<value>]\n" +
                 "        This operation calculate the count of trips between <from-node> and <to-node>\n" +
                 "        which meets the <contition> for the number of stops. The condition consists \n" +
                 "        of comparosion operator and the value to compare to. For example, you may want \n" +
@@ -188,8 +188,12 @@ public class Main
                 "        The -where option accepts operators like <, <=, =, >=, > for comparison and \n" +
                 "        the target value to compare against. Please note, there must be no symbol between \n" +
                 "        this option and its parameters but the \"^\" symbol to escape special symbols\n" +
+                "        [-revisit:<t|f>] and [-maxvisits:<value>] are optional. -revisit can receive only get \"t\" or \"f\"\n" +
+                "        Specifies if the same node can be revisited. Default is true. Example: -revisit:f \n" +
+                "        [-maxvisits:<value>] specifies how many times the same node can be visited. Default is 10 \n" +
+                "            Example: -maxvisits:2 \n" +
                 "\n" +
-                "    routesCount -from:<from-node> -to:<to-node> -where<condition>\n" +
+                "    routesCount -from:<from-node> -to:<to-node> -where<condition> [-revisit:<t|f>] [-maxvisits:<value>]\n" +
                 "            This will calculate number of different routes between nodes meeting the condition.\n" +
                 "        For example, if you want to calculate the number of different routes from C to C \n" +
                 "        with a distance of less than 30, then you can type:\n" +
@@ -197,7 +201,12 @@ public class Main
                 "        The -where option accepts operators like <, <=, =, >=, > for comparison and \n" +
                 "        the target value to compare against. Don't forget to escape special symbols for \n" +
                 "        this option by using \"^\" symbol.\n" +
+                "        [-revisit:<t|f>] and [-maxvisits:<value>] are optional. -revisit can receive only get \"t\" or \"f\"\n" +
+                "        Specifies if the same node can be revisited. Default is true. Example: -revisit:f \n" +
+                "        [-maxvisits:<value>] specifies how many times the same node can be visited. Default is 10 \n" +
+                "            Example: -maxvisits:2 \n" +
                 "        NOTE: where option in this operation compares total route length, not trips count\n" +
+
                 "\n" +
                 "Examples:\n" +
                 "  -load fileName.dat directDistance -route:A-B-C\n" +

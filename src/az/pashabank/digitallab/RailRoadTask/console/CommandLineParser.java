@@ -19,6 +19,8 @@ public class CommandLineParser {
     private Source source;
     private Operator operator;
     private int value;
+    private boolean revisit;
+    private int maxVisits;
 
     public Command getCommand() {
         return command;
@@ -32,9 +34,7 @@ public class CommandLineParser {
         return operation;
     }
 
-    public String getFrom() {
-        return from;
-    }
+    public String getFrom() { return from;}
 
     public String getTo() {
         return to;
@@ -47,6 +47,10 @@ public class CommandLineParser {
     public Operator getOperator() {
         return operator;
     }
+
+    public boolean getRevisit() { return revisit; }
+
+    public int getMaxVisits() { return maxVisits; }
 
     public int getValue() {
         return value;
@@ -65,8 +69,10 @@ public class CommandLineParser {
         operationPatterns = new ArrayList<>();
         operationPatterns.add("(?<operation>directDistance)\\s+-route:(?<from>([A-Z]-)+[A-Z])\\s*");
         operationPatterns.add("(?<operation>shortestRoute)\\s+-from:(?<from>[A-Z])\\s+-to:(?<to>[A-Z])\\s*");
-        operationPatterns.add("(?<operation>tripsCount)\\s+-from:(?<from>[A-Z])\\s+-to:(?<to>[A-Z])\\s+-where(?<operator>[<=>]+)(?<value>\\d+)\\s*");
-        operationPatterns.add("(?<operation>routesCount)\\s+-from:(?<from>[A-Z])\\s+-to:(?<to>[A-Z])\\s+-where(?<operator>[<=>]+)(?<value>\\d+)\\s*");
+        operationPatterns.add("(?<operation>tripsCount)\\s+-from:(?<from>[A-Z])\\s+-to:(?<to>[A-Z])\\s+-where(?<operator>[<=>]+)(?<value>\\d+)(\\s+-revisit:(?<revisit>[tf]))?(\\s+-maxvisits:(?<maxvisits>[0-9]+))?\\s*");
+        operationPatterns.add("(?<operation>routesCount)\\s+-from:(?<from>[A-Z])\\s+-to:(?<to>[A-Z])\\s+-where(?<operator>[<=>]+)(?<value>\\d+)(\\s+-revisit:(?<revisit>[tf]))?(\\s+-maxvisits:(?<maxvisits>[0-9]+))?\\s*");
+
+        revisit = true;
     }
 
     public boolean parse (String[] args)
@@ -102,6 +108,9 @@ public class CommandLineParser {
                 this.source = Source.parse(getVal(matcher, "source", ""));
                 this.operator = Operator.parse(getVal(matcher, "operator", ""));
                 this.value = Integer.valueOf(getVal(matcher, "value", "0"));
+                this.revisit = (getVal(matcher, "revisit", "t").equalsIgnoreCase("t"));
+                this.maxVisits = Integer.valueOf(getVal(matcher, "maxvisits", "10"));
+
                 return true;
             }
 
@@ -116,7 +125,10 @@ public class CommandLineParser {
         // unfortunately there is no way in Java to know
         // if the given group is present in the matcher or not
         try {
-            return matcher.group(groupName);
+            String groupVal = matcher.group(groupName);
+            if (groupVal == null)
+                return defaultValue;
+            return groupVal;
         } catch (Exception ex){
             return defaultValue;
         }
