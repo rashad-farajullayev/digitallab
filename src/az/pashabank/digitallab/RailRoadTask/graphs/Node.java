@@ -6,7 +6,6 @@ import java.util.List;
 public class Node {
 
     private String name;
-
     private List<Edge> outboundEdges;
 
     public Node(String name) throws GraphException {

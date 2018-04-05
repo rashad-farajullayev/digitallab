@@ -25,7 +25,7 @@ public class Graph {
         Graph graph = new Graph();
         for (String s : input) {
             s = s.trim();
-            if (!s.matches("[A-Z]{2}[0-9]"))
+            if (!s.matches("[A-Z]{2}[0-9]+"))
                 throw new GraphException("The provided argument does not match the input edge format: " + s);
 
             String fromNode = s.substring(0, 1);
@@ -92,8 +92,7 @@ public class Graph {
         }
     }
 
-    public List<Route> findRoutes(String from, String to, Condition condition){
-
+    public List<Route> findRoutes(String from, String to, Condition condition, boolean canRevisit){
         Node node = getNode(from);
 
         if (node == null) {
@@ -108,7 +107,7 @@ public class Graph {
         route.addNode(node.getName(), 0);
 
         try {
-            deepDive(routes, route, node, to, condition);
+            deepDive(routes, route, node, to, condition, canRevisit);
         }
         catch (RuleException ex){
             System.out.println(ex.getMessage());
@@ -121,13 +120,17 @@ public class Graph {
         return routes;
     }
 
-    private void deepDive(List<Route> foundRoutes, Route route, Node node, String to, Condition condition) throws GraphException, RuleException {
+    private void deepDive(List<Route> foundRoutes, Route route, Node node, String to, Condition condition, boolean canRevisit) throws GraphException, RuleException {
 
         if (node == null)
             throw new GraphException("Node with the given name could not be found");
 
         List<Edge> edges = node.getOutboundEdges();
         for (Edge e : edges) {
+
+            if (!canRevisit && route.getRoute().indexOf(e.getToNode())>0)
+                continue;
+
             Route newRoute = route.clone();
             newRoute.addNode(e.getToNode(), e.getDistance());
 
@@ -136,13 +139,13 @@ public class Graph {
             }
 
             if (condition.shouldContinue(newRoute))
-                deepDive(foundRoutes, newRoute, getNode(e.getToNode()), to, condition);
+                deepDive(foundRoutes, newRoute, getNode(e.getToNode()), to, condition, canRevisit);
         }
     }
 
     public int findTripsCount(String from, String to, Operator operator, int value) {
 
-        List<Route> routes = findRoutes(from, to, new Condition(Source.STOPS, operator, value));
+        List<Route> routes = findRoutes(from, to, new Condition(Source.STOPS, operator, value), true);
         if (routes == null)
             return 0;
         return routes.size();
@@ -156,7 +159,7 @@ public class Graph {
             totalDistance += e.getDistance();
         }
 
-        List<Route> routes = findRoutes(from, to, new Condition(Source.DISTANCE, Operator.SMALLER_THAN_EQUAL, totalDistance));
+        List<Route> routes = findRoutes(from, to, new Condition(Source.DISTANCE, Operator.SMALLER_THAN_EQUAL, totalDistance), false);
 
         if (routes == null || routes.size() == 0)
             return -1;
@@ -171,7 +174,7 @@ public class Graph {
     }
 
     public int findTotalRoutesCount (String from, String to, Operator operator, long value) {
-        List<Route> routes = findRoutes(from, to, new Condition(Source.DISTANCE, operator, value));
+        List<Route> routes = findRoutes(from, to, new Condition(Source.DISTANCE, operator, value), true);
 
         if (routes == null || routes.size() == 0)
             return -1;

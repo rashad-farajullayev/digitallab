@@ -24,7 +24,7 @@ public class Condition {
             case STOPS:
                 toCheck = route.getStops(); // don't count the first node as stop
                 break;
-            default: 
+            default:
                 throw new RuleException ("Check function doesn't support other sources: " + source.toString());
         }
 

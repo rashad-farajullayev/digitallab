@@ -1,10 +1,12 @@
 package az.pashabank.digitallab.RailRoadTask;
 
 import az.pashabank.digitallab.RailRoadTask.graphs.GraphException;
+import az.pashabank.digitallab.RailRoadTask.rule.Condition;
 import az.pashabank.digitallab.RailRoadTask.rule.Operator;
 import az.pashabank.digitallab.RailRoadTask.console.CommandLineParser;
 import az.pashabank.digitallab.RailRoadTask.graphs.Graph;
 import az.pashabank.digitallab.RailRoadTask.graphs.Route;
+import az.pashabank.digitallab.RailRoadTask.rule.Source;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -95,7 +97,7 @@ public class Main
                 return null;
             }
 
-            if (!fileContent.matches("([A-Z]{2}[0-9]\\s*,?\\s*)+")){
+            if (!fileContent.matches("([A-Z]{2}[0-9]+\\s*,?\\s*)+")){
                 System.out.println("File body doesn't match expected format. See -help for operation instructions");
                 return null;
             }
